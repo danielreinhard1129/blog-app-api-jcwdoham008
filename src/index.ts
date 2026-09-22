@@ -1,11 +1,14 @@
 import express from "express";
 import { globalError, notFoundError } from "./utils/errors.js";
 import { userRoutes } from "./routes/user.route.js";
+import { postRoutes } from "./routes/post.route.js";
+import cors from "cors";
 
 const PORT = 8000;
 
 const app = express();
 
+app.use(cors());
 app.use(express.json()); // agar bisa menerima req.body
 
 app.get("/api", (req, res) => {
@@ -14,6 +17,7 @@ app.get("/api", (req, res) => {
 
 // entry point
 app.use("/users", userRoutes);
+app.use("/posts", postRoutes);
 
 // errors
 app.use(globalError);

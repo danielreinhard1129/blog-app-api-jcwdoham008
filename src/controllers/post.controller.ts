@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
-import { getPostsService } from "../services/post.service.js";
+import {
+  getPostBySlugService,
+  getPostsService,
+} from "../services/post.service.js";
 
 export const getPostsController = async (req: Request, res: Response) => {
   const query = {
@@ -10,5 +13,11 @@ export const getPostsController = async (req: Request, res: Response) => {
     search: (req.query.search as string) || "",
   };
   const result = await getPostsService(query);
+  res.status(200).send(result);
+};
+
+export const getPostBySlugController = async (req: Request, res: Response) => {
+  const slug = String(req.params.slug);
+  const result = await getPostBySlugService(slug);
   res.status(200).send(result);
 };

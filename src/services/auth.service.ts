@@ -5,9 +5,11 @@ import {
   ForgotPasswordSchema,
   LoginSchema,
   RegisterSchema,
+  ResetPasswordSchema,
 } from "../validators/auth.validator.js";
 import jwt from "jsonwebtoken";
 import { sendMail } from "../lib/mail.js";
+import { getUserService } from "./user.service.js";
 
 export const registerService = async (body: RegisterSchema) => {
   // 1. cek dulu emailnya udah kepake atau belom
@@ -105,4 +107,20 @@ export const forgotPasswordService = async (body: ForgotPasswordSchema) => {
   });
 
   return { message: "Send email success" };
+};
+
+export const resetPasswordService = async (
+  body: ResetPasswordSchema,
+  userId: number,
+) => {
+  await getUserService(userId);
+
+  const hashedPassword = await argon.hash(body.password);
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { password: hashedPassword },
+  });
+
+  return { message: "Reset password success" };
 };

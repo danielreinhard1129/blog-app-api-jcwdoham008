@@ -4,7 +4,7 @@ import {
   getPostBySlugController,
   getPostsController,
 } from "../controllers/post.controller.js";
-import { verifyToken } from "../middlewares/auth.middleware.js";
+import { verifyRole, verifyToken } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/upload.middleware.js";
 import { validate } from "../middlewares/validation.middleware.js";
 import { createPostSchema } from "../validators/post.validator.js";
@@ -16,6 +16,7 @@ postRoutes.get("/:slug", getPostBySlugController);
 postRoutes.post(
   "/",
   verifyToken(process.env.JWT_SECRET!),
+  verifyRole(["USER"]),
   upload().fields([{ name: "thumbnail", maxCount: 1 }]),
   validate(createPostSchema),
   createPostController,

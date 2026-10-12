@@ -3,6 +3,7 @@ import { prisma } from "../lib/prisma.js";
 import { ApiError } from "../utils/api-error.js";
 import {
   ForgotPasswordSchema,
+  GoogleSchema,
   LoginSchema,
   RegisterSchema,
   ResetPasswordSchema,
@@ -10,6 +11,7 @@ import {
 import jwt from "jsonwebtoken";
 import { sendMail } from "../lib/mail.js";
 import { getUserService } from "./user.service.js";
+import axios from "axios";
 
 export const registerService = async (body: RegisterSchema) => {
   // 1. cek dulu emailnya udah kepake atau belom
@@ -123,4 +125,63 @@ export const resetPasswordService = async (
   });
 
   return { message: "Reset password success" };
+};
+
+export const googleService = async (body: GoogleSchema) => {
+  const response = await axios.get(
+    "https://www.googleapis.com/oauth2/v3/userinfo",
+    {
+      headers: {
+        Authorization: `Bearer ${body.accessToken}`,
+      },
+    },
+  );
+
+  let user = await prisma.user.findUnique({
+    where: { email: response.data.email },
+  });
+
+  if (user) {
+    // Soft deleted account
+    if (user.deletedAt) {
+      throw new ApiError("This account has been deleted", 403);
+    }
+
+    // Existing credentials account
+    if (user.provider !== "GOOGLE") {
+      throw new ApiError("Please login using credentials", 400);
+    }
+  }
+
+  // kalo emailnya belum kepake sama sekali
+  if (!user) {
+    user = await prisma.user.create({
+      data: {
+        name: response.data.name,
+        email: response.data.email,
+        password: "",
+        profilePic: response.data.picture,
+        provider: "GOOGLE",
+      },
+    });
+  }
+
+  // generate accessToken (jwt)
+  const payload = { id: user.id, role: user.role };
+  const accessToken = jwt.sign(payload, process.env.JWT_SECRET!, {
+    expiresIn: "1d",
+  });
+
+  // return message login success + data user + access tokennya
+  return {
+    message: "Login success",
+    accessToken: accessToken,
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      profilePic: user.profilePic,
+    },
+  };
 };

@@ -43,6 +43,11 @@ export const resetPasswordSchema = z.object({
     }),
 });
 
+export const googleSchema = z.object({
+  accessToken: z.string().min(1),
+});
+
+export type GoogleSchema = z.infer<typeof googleSchema>;
 export type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;
 export type ForgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
 export type LoginSchema = z.infer<typeof loginSchema>;

@@ -1,6 +1,7 @@
 import express from "express";
 import {
   forgotPasswordController,
+  googleController,
   loginController,
   registerController,
   resetPasswordController,
@@ -9,6 +10,7 @@ import { verifyToken } from "../middlewares/auth.middleware.js";
 import { validate } from "../middlewares/validation.middleware.js";
 import {
   forgotPasswordSchema,
+  googleSchema,
   loginSchema,
   registerSchema,
   resetPasswordSchema,
@@ -29,5 +31,6 @@ authRoutes.post(
   validate(resetPasswordSchema),
   resetPasswordController,
 );
+authRoutes.post("/google", validate(googleSchema), googleController);
 
 export { authRoutes };

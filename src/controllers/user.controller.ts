@@ -4,6 +4,7 @@ import {
   deleteUserService,
   getUserService,
   getUsersService,
+  sampleService,
   updateUserService,
 } from "../services/user.service.js";
 
@@ -39,5 +40,10 @@ export const updateUserController = async (req: Request, res: Response) => {
 export const deleteUserController = async (req: Request, res: Response) => {
   const id = Number(req.params.id);
   const result = await deleteUserService(id);
+  res.status(200).send(result);
+};
+
+export const sampleController = async (req: Request, res: Response) => {
+  const result = await sampleService();
   res.status(200).send(result);
 };

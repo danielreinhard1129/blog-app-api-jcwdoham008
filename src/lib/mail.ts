@@ -4,13 +4,23 @@ import { fileURLToPath } from "node:url";
 import { createTransport } from "nodemailer";
 import handlebars from "handlebars";
 
-const transporter = createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.MAIL_USER, // email
-    pass: process.env.MAIL_PASS, // app password
-  },
-});
+const isProduction = process.env.NODE_ENV === "production";
+
+const transporter = createTransport(
+  isProduction
+    ? {
+        service: "gmail",
+        auth: {
+          user: process.env.MAIL_USER, // email
+          pass: process.env.MAIL_PASS, // app password
+        },
+      }
+    : {
+        host: "localhost",
+        port: 1025,
+        secure: false,
+      },
+);
 
 export const sendMail = async ({
   to,
@@ -32,6 +42,7 @@ export const sendMail = async ({
   const html = handlebars.compile(templateSource)(context);
 
   await transporter.sendMail({
+    from: process.env.MAIL_USER,
     to: to,
     subject: subject,
     html: html,

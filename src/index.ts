@@ -8,6 +8,7 @@ import { transactionRoutes } from "./routes/transaction.route.js";
 import { userRoutes } from "./routes/user.route.js";
 import { globalError, notFoundError } from "./utils/errors.js";
 import { expiredTransactionCron } from "./scripts/transaction.js";
+import { loggerHttp } from "./lib/logger.js";
 
 const PORT = 8000;
 
@@ -16,6 +17,7 @@ const app = express();
 app.use(cors(corsOptions));
 app.use(express.json()); // agar bisa menerima req.body
 app.use(cookieParser());
+app.use(loggerHttp);
 
 app.get("/api", (req, res) => res.status(200).send("Welcome to my API"));
 

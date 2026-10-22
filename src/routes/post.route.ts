@@ -5,7 +5,7 @@ import {
   getPostsController,
 } from "../controllers/post.controller.js";
 import { verifyRole, verifyToken } from "../middlewares/auth.middleware.js";
-import { upload } from "../middlewares/upload.middleware.js";
+import { fileFilter, upload } from "../middlewares/upload.middleware.js";
 import { validate } from "../middlewares/validation.middleware.js";
 import { createPostSchema } from "../validators/post.validator.js";
 
@@ -18,6 +18,7 @@ postRoutes.post(
   verifyToken(process.env.JWT_SECRET!),
   verifyRole(["USER"]),
   upload().fields([{ name: "thumbnail", maxCount: 1 }]),
+  fileFilter(["image/jpeg", "image/avif", "image/png", "image/webp"]),
   validate(createPostSchema),
   createPostController,
 );

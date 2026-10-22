@@ -14,11 +14,11 @@ transactionRoutes.post(
   createTransactionController,
 ); // fitur 1
 
-transactionRoutes.post("/payment-proof"); // fitur 1
+// transactionRoutes.post("/payment-proof"); // fitur 1
 
-transactionRoutes.get("/"); // fitur 2
-transactionRoutes.post("/accept"); // fitur 2
-transactionRoutes.post("/reject"); // fitur 2
+// transactionRoutes.get("/"); // fitur 2
+// transactionRoutes.post("/accept"); // fitur 2
+// transactionRoutes.post("/reject"); // fitur 2
 
 
 

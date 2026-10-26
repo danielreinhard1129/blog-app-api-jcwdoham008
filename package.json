@@ -8,7 +8,8 @@
     "copy-files": "node -e \"require('fs').cpSync('src/templates', 'dist/src/templates', { recursive: true });\"",
     "build": "tsc && npm run copy-files",
     "start": "node dist/src/index.js",
-    "dev": "tsx --watch src/index.ts"
+    "dev": "tsx --watch src/index.ts",
+    "postinstall": "prisma generate"
   },
   "keywords": [],
   "author": "",
